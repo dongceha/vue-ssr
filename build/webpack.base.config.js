@@ -11,7 +11,8 @@ module.exports = {
     mode: isProd ? 'production' : 'development', 
     output: { 
         path: resolve('../dist/'), 
-        publicPath: '/dist/', filename: '[name].[chunkhash].js' 
+        publicPath: '/dist/',
+        filename: '[name].[chunkhash].js' 
     },
     resolve: {
         alias: { 

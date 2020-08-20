@@ -13,25 +13,11 @@ const express = require('express')
 
 const server = express()
 
+// 把静态资源释放出来
+server.use('/dist', express.static('./dist'))
+
 server.get('/', (req, res) => {
-    const app = new Vue({
-        template: `
-          <div id="app">
-            <h1>{{message}}</h1>
-            <input v-model="message"/>
-            <button @click="onClick">点击</button>
-          </div>
-        `,
-        data: {
-            message: '拉钩教育'
-        },
-        methods: {
-            onClick() {
-                console.log('hello world')
-            }
-        }
-    });
-    renderer.renderToString(app, {
+    renderer.renderToString({
         title: 'vue ssr',
         meta: `
          <meta name="description" content="试一试">
