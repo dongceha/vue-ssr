@@ -36,24 +36,24 @@ if (isProd) {
 }
 
 
-const render = (req, res) => {
-    renderer.renderToString({
-        title: 'vue ssr',
-        meta: `
-         <meta name="description" content="试一试">
-        `,
-        url: req.url
-    }, (err, html) => {
-        if (err) {
-            res.status(500).end('Internal server Error')
-            return;
-        }
+const render = async (req, res) => {
+    try {
+        const html = await renderer.renderToString({
+            title: 'vue ssr',
+            meta: `
+             <meta name="description" content="试一试">
+            `,
+            url: req.url
+        })
         res.setHeader('content-type', 'text/html; charset=utf8')
         res.end(html)
-    })
+    } catch (error) {
+        return res.status(500).end('Internal Server Error')
+    }
 }
 
-server.get('/', isProd 
+// 服务端路由设置为 * ，意味着所有的路由都会进入这里
+server.get('*', isProd 
   ? render
   : async (req, res) => {
     // 等待有了 Renderer 渲染器以后，调用 render 进行渲染

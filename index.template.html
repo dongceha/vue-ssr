@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- 使用3个大括号，表示不会对文本进行处理，会作为标签渲染 -->
-    {{{meta}}}
-    <title>{{title}}</title>
+    {{{ meta.inject().title.text() }}}
+    {{{ meta.inject().meta.text() }}}
 </head>
 <body>
     <!--vue-ssr-outlet-->

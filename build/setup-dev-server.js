@@ -4,6 +4,7 @@ const chokidar = require('chokidar')
 
 const webpack = require('webpack')
 const devMiddleware = require('webpack-dev-middleware')
+const hotMiddleware = require('webpack-hot-middleware')
 
 const resolve = file => path.resolve(__dirname, file);
 
@@ -58,9 +59,15 @@ module.exports = (server, callback) => {
     // })
     // 监视构建 clientManifest -> 调用 update -> 更新 Renderer 渲染器
     const clientConfig = require('./webpack.client.config')
+    clientConfig.plugins.push(new webpack.HotModuleReplacementPlugin())
+    clientConfig.entry.app = [
+        'webpack-hot-middleware/client?quiet=true&reload=true',  // 和服务端交互处理热更新的一个 客户端脚本
+        clientConfig.entry.app
+    ]
+    clientConfig.output.filename = '[name].js'
     const clientCompiler = webpack(clientConfig)
     const clientDevMiddleware =  devMiddleware(clientCompiler, {
-        publicPath: clientConfig.output.path,
+        publicPath: clientConfig.output.publicPath,
         logLevel: 'silent', // 关闭日志输出，由 FriendlyErrorsWebpackPlugin 统一管理日志输出
     })
     // 添加一个钩子，构建结束的时候
@@ -72,9 +79,9 @@ module.exports = (server, callback) => {
         // console.log(clientManifest)
         update()
     })
-    // server.use(hotMiddleware(clientCompiler, {
-    //     log: false // 关闭它本身的日志输出
-    // }))
+    server.use(hotMiddleware(clientCompiler, {
+        log: false // 关闭它本身的日志输出
+    }))
     // 重要！！将 clientDevMiddleware 挂载到 Express 中，
     // 提供对其内部内存中数据的访问
     server.use(clientDevMiddleware)
